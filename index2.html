@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Content Mapper</title>
+    <style>
+        body {
+            font-family: Roboto, Helvetica, Arial, sans-serif;
+        }
+        .section-container {
+            padding: 0;
+        }
+        .box {
+            border: 1px solid #ccc;
+            padding: 10px;
+            margin: 10px 0;
+        }
+        .message {
+            text-align: center;
+            color: #333;
+            font-size: 18px;
+            margin: 10px 0;
+        }
+        .row {
+            display: flex;
+            flex-wrap: wrap;
+        }
+        .col-xs-12 {
+            flex: 1;
+        }
+        .col-md-12 {
+            flex: 1;
+        }
+    </style>
+</head>
+<body>
+
+<div class="section-container">
+    <div class="container">
+        <div class="row">
+            <div class="col-xs-12">
+                <div style="font-size: 24px; margin: 20px; font-weight: bold; text-align: center;">
+                    AI Content Mapper
+                </div>
+            </div>
+        </div>
+        <div class="row" style="float: left; width: 80%; margin: 0; border: 1px solid #ccc;">
+            <div class="col-xs-12" style="padding: 0;">
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="box"></div>
+                        <iframe id="mainIframe" src="" width="100%" height="900px" frameBorder="0"></iframe>
+                    </div>
+
+                    <div class="col-xs-12" style="display: none;">
+                        <div class="row">
+                            <button class="col-md-6" id="get_images_from_course">Get Images from Course</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="message" id="statusMessage"></div>
+    </div>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    $('#courseupload').on('click', function() {
+        const folderInput = document.getElementById('folderInput');
+        const file = folderInput.files[0];
+
+        if (file) {
+            const formData = new FormData();
+            formData.append('folder', file);
+
+            $.ajax({
+                url: 'http://127.0.0.1:5000/reet',
+                type: "POST",
+                data: formData,
+                processData: false,
+                contentType: false,
+                success: function(response) {
+                    if (response.path) {
+                        $('#mainIframe').attr('src', response.path);
+                        $('#statusMessage').text('File uploaded successfully! The content is now visible in the iframe.');
+                    } else {
+                        $('#statusMessage').text('Error: ' + response.error);
+                    }
+                },
+                error: function() {
+                    $('#statusMessage').text("Error uploading file.");
+                }
+            });
+        } else {
+            $('#statusMessage').text('Please select a file to upload.');
+        }
+    });
+</script>
+
+</body>
+</html>
